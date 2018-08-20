@@ -160,11 +160,11 @@ public class WineView extends View {
         redPaint.setColor(Color.RED);
         canvas.drawLine(mWidth / 2, 0, mWidth / 2, mHeight, redPaint);
 
-        Paint ovalPaint = new Paint();
+        /*Paint ovalPaint = new Paint();
         ovalPaint.setColor(Color.RED);
         ovalPaint.setStrokeWidth(indexTitleWidth);
         canvas.drawLine(mWidth / 2, 0, mWidth / 2, indexTitleHight, ovalPaint);
-        canvas.drawLine(mWidth / 2, mHeight - indexTitleHight, mWidth / 2, mHeight, ovalPaint);
+        canvas.drawLine(mWidth / 2, mHeight - indexTitleHight, mWidth / 2, mHeight, ovalPaint);*/
 
         canvas.restore();
     }
@@ -209,7 +209,7 @@ public class WineView extends View {
         mVelocityTracker.computeCurrentVelocity(1000);
         float xVelocity = mVelocityTracker.getXVelocity();
         if (Math.abs(xVelocity) > mMinVelocity) {
-            mScroller.fling(0, 0, (int) xVelocity, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
+            mScroller.fling(0, 0, (int) xVelocity, 0, mMinValue, mMaxValue, 0, 0);
         }
     }
 
@@ -236,6 +236,8 @@ public class WineView extends View {
 
         mLastX = 0;
         mMove = 0;
+
+
 
         notifyValueChange();
         postInvalidate();
