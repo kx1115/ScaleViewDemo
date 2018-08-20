@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    private WineView mWineView;
+    private ScaleView mWineView;
     private TextView mTextView;
 
     @Override
@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         mTextView=findViewById(R.id.textview);
 
         mWineView.setValue(20,50,283);
-        mWineView.setValueChangeListener(new WineView.OnValueChangeListener() {
+        mWineView.setValueChangeListener(new ScaleView.OnValueChangeListener() {
             @Override
             public void onValueChange(float value) {
                 mTextView.setText(""+value);
