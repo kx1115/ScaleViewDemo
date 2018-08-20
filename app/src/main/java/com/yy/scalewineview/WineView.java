@@ -40,7 +40,8 @@ public class WineView extends View {
     private VelocityTracker mVelocityTracker;
     private OnValueChangeListener mListener;
 
-    float distance;
+    //值换算成画线的宽度计算用的
+    private float distance;
 
     public WineView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -52,9 +53,41 @@ public class WineView extends View {
 
         mMinVelocity = ViewConfiguration.get(getContext()).getScaledMinimumFlingVelocity();
     }
+
+    /**
+     * 设置值
+     * @param defaultValue 默认指向的值
+     * @param minValue 最小值
+     * @param maxValue 最大值
+     */
+    public void setValue(int defaultValue,int minValue,int maxValue) {
+        this.mMinValue = minValue;
+        this.mValue=defaultValue;
+        this.mMaxValue=maxValue;
+    }
+
+    /**
+     * 设置返回值的规定
+     * @param mValueUnit 选择的值为此值的倍数
+     */
+    public void setValueUnit(int mValueUnit) {
+        this.mValueUnit = mValueUnit;
+    }
+
+    /**
+     * 设置刻度
+     * @param minUnit 最小刻度表示的值大小，比如10表示一个最小刻度对应大小为10
+     * @param gap 两个最小刻度间隔宽度
+     * @param maxUint 多少个最小刻度对应一个长刻度
+     */
+    public void setScale(int minUnit,int gap,int maxUint){
+        mMinUnit=minUnit;
+        mGap=gap;
+        mUnit=maxUint;
+    }
+
     /**
      * 设置用于接收结果的监听器
-     *
      * @param listener
      */
     public void setValueChangeListener(OnValueChangeListener listener) {
@@ -69,10 +102,11 @@ public class WineView extends View {
         mLastX = 0;
         mMove = 0;
         notifyValueChange();
+
+        return;
     }
     /**
      * 获取当前刻度值
-     *
      * @return
      */
     public float getValue() {
@@ -107,6 +141,7 @@ public class WineView extends View {
         drawScaleLine(canvas,paint);
         //画中间线
         drawMiddleLine(canvas,paint);
+        return;
     }
 
 
@@ -165,22 +200,12 @@ public class WineView extends View {
      * @param canvas
      */
     private void drawMiddleLine(Canvas canvas, Paint paint) {
-        // 常量太多，暂时放这，最终会放在类的开始，放远了怕很快忘记
-        int gap = 12, indexWidth = 8, indexTitleWidth = 24, indexTitleHight = 10, shadow = 6;
-        String color = "#66999999";
-
         canvas.save();
 
         Paint redPaint = new Paint();
-        redPaint.setStrokeWidth(indexWidth);
+        redPaint.setStrokeWidth(4);
         redPaint.setColor(Color.RED);
         canvas.drawLine(mWidth / 2, 0, mWidth / 2, mHeight, redPaint);
-
-        /*Paint ovalPaint = new Paint();
-        ovalPaint.setColor(Color.RED);
-        ovalPaint.setStrokeWidth(indexTitleWidth);
-        canvas.drawLine(mWidth / 2, 0, mWidth / 2, indexTitleHight, ovalPaint);
-        canvas.drawLine(mWidth / 2, mHeight - indexTitleHight, mWidth / 2, mHeight, ovalPaint);*/
 
         canvas.restore();
     }
@@ -197,9 +222,7 @@ public class WineView extends View {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-
                 mScroller.forceFinished(true);
-
                 mLastX = xPosition;
                 mMove = 0;
                 break;
@@ -212,7 +235,6 @@ public class WineView extends View {
                 countMoveEnd();
                 countVelocityTracker(event);
                 return false;
-            // break;
             default:
                 break;
         }
@@ -225,7 +247,6 @@ public class WineView extends View {
         mVelocityTracker.computeCurrentVelocity(1000);
         float xVelocity = mVelocityTracker.getXVelocity();
         if (Math.abs(xVelocity) > mMinVelocity) {
-            //mScroller.fling(0, 0, (int) xVelocity, 0, mMinValue, mMaxValue, 0, 0);
             mScroller.fling(0, 0, (int) xVelocity, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
         }
     }
@@ -236,7 +257,6 @@ public class WineView extends View {
             mValue += tValue;
             mMove -= tValue * distance;
             if (mValue <= 0 || mValue > mMaxValue) {
-                //mValue = Math.round(1.0f*mValue/mValueUnit)*mValueUnit;
                 mValue = mValue <= 0 ? 0 : mMaxValue;
                 mMove = 0;
                 mScroller.forceFinished(true);
