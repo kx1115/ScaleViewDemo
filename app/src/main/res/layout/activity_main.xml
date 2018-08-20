@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:text=""/>
-    <com.yy.scalewineview.WineView
+    <com.yy.scalewineview.ScaleView
         android:id="@+id/wineView"
         android:layout_width="match_parent"
         android:layout_height="80dp"
