@@ -20,8 +20,13 @@ public class WineView extends View {
     private static final int ITEM_MIN_HEIGHT = 20;
 
     private float mDensity;
+
+    //刻度的最大及最小值
+    private int mScaleMin=0;
+    private int mScaleMax=500;
+
     //最小值，当前值，最大值
-    private int mMinValue=0, mValue = 50, mMaxValue = 500;
+    private int mMinValue=50, mValue = 50, mMaxValue = 500;
     // 选择的值为此数的倍数
     private int mValueUnit=50;
     //每个小刻度表示的value大小
@@ -45,9 +50,6 @@ public class WineView extends View {
 
     public WineView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-
-
         mScroller = new Scroller(getContext());
         mDensity = getContext().getResources().getDisplayMetrics().density;
 
@@ -64,6 +66,16 @@ public class WineView extends View {
         this.mMinValue = minValue;
         this.mValue=defaultValue;
         this.mMaxValue=maxValue;
+    }
+
+    /**
+     * 设置刻度范围
+     * @param scaleMin
+     * @param scaleMax
+     */
+    public void setScale(int scaleMin,int scaleMax){
+        this.mScaleMin=scaleMin;
+        this.mScaleMax=scaleMax;
     }
 
     /**
@@ -157,8 +169,8 @@ public class WineView extends View {
 
         //mValue
         int mFixValue=mValue/maxUnit*maxUnit;
-        int left=mFixValue-mMinValue;
-        int right=mMaxValue-mFixValue;
+        int left=mFixValue-mScaleMin;
+        int right=mScaleMax-mFixValue;
 
 
 
@@ -174,7 +186,7 @@ public class WineView extends View {
         int width = mWidth, drawCount = 0;
         float xPosition = 0, textWidth = Layout.getDesiredWidth("0", textPaint);
 
-        for(int i=mMinValue;i<=mMaxValue;i+=mMinUnit){
+        for(int i=mScaleMin;i<=mScaleMax;i+=mMinUnit){
             xPosition=fixVuleX+ Math.round((i-mFixValue) * distance);
             if(xPosition<-100)continue;
             if(xPosition>width+100)return;
@@ -202,10 +214,9 @@ public class WineView extends View {
     private void drawMiddleLine(Canvas canvas, Paint paint) {
         canvas.save();
 
-        Paint redPaint = new Paint();
-        redPaint.setStrokeWidth(4);
-        redPaint.setColor(Color.RED);
-        canvas.drawLine(mWidth / 2, 0, mWidth / 2, mHeight, redPaint);
+        paint.setStrokeWidth(4);
+        paint.setColor(Color.RED);
+        canvas.drawLine(mWidth / 2, 0, mWidth / 2, mHeight, paint);
 
         canvas.restore();
     }
@@ -256,8 +267,8 @@ public class WineView extends View {
         if (Math.abs(tValue) > 0) {
             mValue += tValue;
             mMove -= tValue * distance;
-            if (mValue <= 0 || mValue > mMaxValue) {
-                mValue = mValue <= 0 ? 0 : mMaxValue;
+            if (mValue <= mMinValue || mValue > mMaxValue) {
+                mValue = mValue <= mMinValue ? mMinValue : mMaxValue;
                 mMove = 0;
                 mScroller.forceFinished(true);
             }
@@ -272,7 +283,7 @@ public class WineView extends View {
 
         mValue = Math.round(1.0f*mValue/mValueUnit)*mValueUnit;
 
-        mValue = mValue <= 0 ? 0 : mValue;
+        mValue = mValue <= mMinValue ? mMinValue : mValue;
         mValue = mValue > mMaxValue ? mMaxValue : mValue;
 
         mLastX = 0;

@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         mWineView=findViewById(R.id.wineView);
         mTextView=findViewById(R.id.textview);
 
-        mWineView.setValue(20,0,283);
+        mWineView.setValue(20,50,283);
         mWineView.setValueChangeListener(new WineView.OnValueChangeListener() {
             @Override
             public void onValueChange(float value) {
